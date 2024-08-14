@@ -3,5 +3,5 @@ from django.shortcuts import render
 # Create your views here.
 
 
-class PublicUserViewset:
-    pass
+# class PublicUserViewset:
+# pass

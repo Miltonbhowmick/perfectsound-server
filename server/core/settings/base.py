@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "home",
     "search",
+    "account",
 ]
 
 MIDDLEWARE = [
@@ -129,6 +130,13 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+AUTH_USER_MODEL = "account.User"
+AUTHENTICATION_BACKENDS = (
+    "account.auth_backend.UsernameOrEmailModelBackend",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 
 # Internationalization

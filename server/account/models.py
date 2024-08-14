@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .managers import UserProfileManager
 from .utils.choices import *
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(_("Username"), max_length=100, unique=True)
     email = models.EmailField(_("Email"), max_length=100, unique=True)
     first_name = models.CharField(
         _("First Name"), max_length=255, blank=True, null=True
@@ -42,11 +43,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserProfileManager()
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ("nickname",)
+    REQUIRED_FIELDS = ("username",)
 
     def __str__(self):
-        if self.nickname:
-            return self.nickname
+        if self.username:
+            return self.username
         else:
             return self.email.split("@")[0]
 

@@ -5,10 +5,7 @@ from rest_framework import routers
 app_name = "account"
 
 router = routers.DefaultRouter()
-router.register(
-    r"users",
-    PublicUserViewset,
-)
+# router.register(r"users", PublicUserViewset, basename="users")
 
 
 urlpatterns = [path("public/", include(router.urls))]

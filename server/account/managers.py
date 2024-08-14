@@ -8,8 +8,8 @@ class UserProfileManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password, nickname):
-        user = self.create_user(email=email, password=password, nickname=nickname)
+    def create_superuser(self, email, password, username):
+        user = self.create_user(email=email, password=password, username=username)
         user.is_superuser = True
         user.is_staff = True
         user.is_active = True
