@@ -14,7 +14,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         _("First Name"), max_length=255, blank=True, null=True
     )
     last_name = models.CharField(_("Last Name"), max_length=255, blank=True, null=True)
-    is_email_verified = models.BooleanField(_("Is email verified?"), default=False)
     mobile_number = models.CharField(
         _("Mobile number"), max_length=50, null=True, blank=True
     )
@@ -36,6 +35,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         _("Join date"), auto_now_add=True, null=True, blank=True
     )
 
+    is_email_verified = models.BooleanField(_("Is email verified?"), default=False)
     is_active = models.BooleanField(_("Is active"), default=True)
     is_staff = models.BooleanField(_("Is staff"), default=False)
     is_2fa = models.BooleanField(_("Is 2FA?"), default=False)
