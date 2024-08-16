@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 from .managers import UserProfileManager
 from .utils.choices import *
+from .utils.utils import generate_otp
+from .emails import send_otp_email
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -53,3 +55,19 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         ordering = ("-join_date",)
+
+    def send_verification_code(self, reason=None, email=None):
+        if email:
+            obj, created = Verification.objects.get_or_create(email=email)
+            if not created:
+                obj.code = generate_otp()
+                obj.save()
+            send_otp_email(email=email, otp=obj.code, reason=reason)
+
+
+class Verification(models.Model):
+    email = models.EmailField(_("Email"), max_length=100)
+    code = models.IntegerField(_("Code"), default=generate_otp, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.email)

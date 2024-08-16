@@ -18,3 +18,11 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+class VerificationAdmin(admin.ModelAdmin):
+    list_display = ("email", "code")
+    search_fields = ["email"]
+
+
+admin.site.register(Verification, VerificationAdmin)
