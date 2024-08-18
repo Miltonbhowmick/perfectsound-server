@@ -160,7 +160,6 @@ class SigninSerializer(serializers.Serializer):
         user = UsernameOrEmailModelBackend.authenticate(
             self, username=username, password=password
         )
-        print(user, "+=====")
 
         if user.is_email_verified and user.is_2fa == False:
             token, token_created = Token.objects.get_or_create(user=user)

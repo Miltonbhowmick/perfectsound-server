@@ -20,6 +20,13 @@ class PublicUserViewset(viewsets.ModelViewSet):
         serializer_class=SignupSerializer,
     )
     def signup(self, request):
+        """
+        {
+            "email": "email",
+            "password": "password",
+            "confirm_password":"confirm_password",
+        }
+        """
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
@@ -37,7 +44,7 @@ class PublicUserViewset(viewsets.ModelViewSet):
     def send_verification_code(self, request):
         """
         {
-            "email": "mail",
+            "email": "email",
             "reason": "code_reason",
         }
         """
