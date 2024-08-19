@@ -10,14 +10,21 @@ class MinimalSubCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class SubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SubCategory
+        fields = "__all__"
+
+
 class CategorySerializer(serializers.ModelSerializer):
-    subcategories = MinimalSubCategorySerializer(
-        many=True, read_only=True, source="sub_categories"
-    )
+    # subcategories = MinimalSubCategorySerializer(
+    #     many=True, read_only=True, source="sub_categories"
+    # )
 
     class Meta:
         model = Category
-        fields = ["id", "name", "subcategories"]
+        # fields = ["id", "name", "subcategories"]
+        fields = ["id", "name"]
 
 
 class FavouriteSerializer(serializers.ModelSerializer):

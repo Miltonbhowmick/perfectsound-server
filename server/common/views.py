@@ -11,6 +11,12 @@ class PublicCategoryViewset(viewsets.ModelViewSet):
     permission_classes = (AllowAny,)
 
 
+class PublicSubCategoryViewset(viewsets.ModelViewSet):
+    queryset = SubCategory.objects.all()
+    serializer_class = SubCategorySerializer
+    permission_classes = (AllowAny,)
+
+
 class PublicFavouriteViewset(viewsets.ModelViewSet):
     queryset = Favorite.objects.all()
     serializer_class = FavouriteSerializer
