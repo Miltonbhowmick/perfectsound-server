@@ -32,3 +32,6 @@ telepath==0.3.1
 urllib3==2.2.2
 wagtail==6.2
 Willow==1.8.0
+python-decouple==3.1
+mutagen==1.47.0
+librosa==0.10.1
