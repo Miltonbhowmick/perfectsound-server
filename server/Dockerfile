@@ -11,8 +11,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app/server/
 
-COPY ./server /app/server/
-COPY ./server/requirements /app/server/
+COPY . /app/server/
+COPY ./requirements /app/server/
 
 RUN pip install --upgrade pip 
 RUN pip install --no-cache-dir -r requirements/dev.txt
