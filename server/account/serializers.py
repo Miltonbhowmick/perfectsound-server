@@ -130,35 +130,33 @@ class VerifyCodeSerializer(serializers.Serializer):
 
 
 class SigninSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
+    email = serializers.CharField(required=True)
     password = serializers.CharField(
         required=True,
         style={"input_type": "password"},
     )
 
     def validate(self, validated_data):
-        username = validated_data.get("username")
+        email = validated_data.get("email")
         password = validated_data.get("password")
 
         user = UsernameOrEmailModelBackend.authenticate(
-            self, username=username, password=password
+            self, username=email, password=password
         )
         if not user:
-            raise serializers.ValidationError(
-                {"username": ["Incorrect Username/Email!"]}
-            )
+            raise serializers.ValidationError({"email": ["Incorrect Username/Email!"]})
         else:
             if not user.is_active:
                 raise serializers.ValidationError(
-                    {"username": ["Account is blocked! Please contact support!"]}
+                    {"email": ["Account is blocked! Please contact support!"]}
                 )
         return validated_data
 
     def signin(self):
-        username = self.validated_data.get("username")
+        email = self.validated_data.get("email")
         password = self.validated_data.get("password")
         user = UsernameOrEmailModelBackend.authenticate(
-            self, username=username, password=password
+            self, username=email, password=password
         )
 
         if user.is_email_verified and user.is_2fa == False:
@@ -171,3 +169,116 @@ class SigninSerializer(serializers.Serializer):
         user.save()
 
         return user, token
+
+
+class ForgetPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+    code = serializers.IntegerField(required=True)
+    password = serializers.CharField(style={"input_type": "password"})
+
+    def validate_password(self, value):
+        if not re.search(r"[A-Z]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one uppercase letter."
+            )
+        if not re.search(r"\d", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one number."
+            )
+        if not re.search(r"[~!@#$%^&*]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one special character (~!@#$%^&*)."
+            )
+        return value
+
+    def validate(self, validated_data):
+        email = validated_data.get("email")
+        code = validated_data.get("code")
+
+        if not User.objects.filter(email=email).exists():
+            raise serializers.ValidationError({"email": ["Email not found!"]})
+
+        try:
+            verification_obj = Verification.objects.get(email=email)
+        except:
+            verification_obj = None
+
+        if verification_obj is None:
+            raise serializers.ValidationError({"email": ["Not found!"]})
+        else:
+            if verification_obj.code != code:
+                raise serializers.ValidationError({"code": ["Invalid code!"]})
+
+        return validated_data
+
+    def forget_password(self):
+        email = self.validated_data.get("email")
+        password = self.validated_data.get("password")
+
+        user = User.objects.get(email=email)
+        user.set_password(password)
+        user.save()
+
+        verification_obj = Verification.objects.get(email=email)
+        verification_obj.code = None
+        verification_obj.save()
+        return None
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(style={"input_type": "password"})
+    new_password = serializers.CharField(style={"input_type": "password"})
+    new_password2 = serializers.CharField(style={"input_type": "password"})
+
+    def validate_old_password(self, value):
+        user = self.context["user"]
+        if not user.check_password(value):
+            raise serializers.ValidationError("Old password entered incorrectly!")
+        return value
+
+    def validate_new_password(self, value):
+        if not re.search(r"[A-Z]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one uppercase letter."
+            )
+        if not re.search(r"\d", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one number."
+            )
+        if not re.search(r"[~!@#$%^&*]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one special character (~!@#$%^&*)."
+            )
+        return value
+
+    def validate_new_password2(self, value):
+        if not re.search(r"[A-Z]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one uppercase letter."
+            )
+        if not re.search(r"\d", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one number."
+            )
+        if not re.search(r"[~!@#$%^&*]", value):
+            raise serializers.ValidationError(
+                "Password must contain at least one special character (~!@#$%^&*)."
+            )
+        return value
+
+    def validate(self, validated_data):
+        new_password = validated_data.get("new_password")
+        new_password2 = validated_data.get("new_password2")
+
+        if new_password != new_password2:
+            raise serializers.ValidationError(
+                {"new_password": ["The 2 password field not matched!"]}
+            )
+        return validated_data
+
+    def change_password(self):
+        password = self.validated_data.get("new_password")
+        user = self.context["user"]
+        user.set_password(password)
+        user.save()
+        return user

@@ -98,3 +98,45 @@ class PublicUserViewset(viewsets.ModelViewSet):
             data["token"] = token
             return Response(data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=(AllowAny,),
+        serializer_class=ForgetPasswordSerializer,
+    )
+    def forget_password(self, request):
+        """
+        {
+            "email": email,
+            "code": code,
+            "password": new-password
+        }
+        """
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.forget_password()
+            return Response(status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=(IsAuthenticated,),
+        serializer_class=ChangePasswordSerializer,
+    )
+    def change_password(self, request):
+        """
+        {
+            "old_password": old_password,
+            "new_password": new_password,
+            "new_password2": new_password2
+        }
+        """
+        serializer = self.serializer_class(
+            data=request.data, context={"user": request.user}
+        )
+        if serializer.is_valid():
+            user = serializer.change_password()
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
