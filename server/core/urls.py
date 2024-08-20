@@ -14,6 +14,10 @@ urlpatterns = [
     path("documents/", include(wagtaildocs_urls)),
     path("search/", search_views.search, name="search"),
     path("api/v1/account/", include("account.urls", namespace="account")),
+    path("api/v1/common/", include("common.urls", namespace="common")),
+    path("api/v1/music/", include("music.urls", namespace="music")),
+    path("api/v1/payment/", include("payment.urls", namespace="payment")),
+    path("api/v1/order/", include("order.urls", namespace="order")),
 ]
 
 
