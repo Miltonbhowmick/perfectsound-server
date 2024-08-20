@@ -282,3 +282,20 @@ class ChangePasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class NewsletterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Newsletter
+        fields = "__all__"
+
+
+class NewsletterCreateSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    name = serializers.CharField()
+    description = serializers.CharField()
+    attachments = serializers.FileField()
+
+    def create(self, validated_data):
+        newsletter = Newsletter.objects.create(**validated_data)
+        return newsletter

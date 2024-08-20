@@ -26,3 +26,4 @@ class VerificationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Verification, VerificationAdmin)
+admin.site.register(Newsletter)

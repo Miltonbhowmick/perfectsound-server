@@ -57,6 +57,16 @@ class Favorite(models.Model):
         return f"{self.user} - {self.track}"
 
 
+class Newsletter(models.Model):
+    email = models.EmailField()
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    attachments = models.FileField(upload_to="newsletters/", null=True, blank=True)
+
+    def __str__(self):
+        return self.email
+
+
 @register_setting
 class FooterMenu(BaseGenericSetting):
     title = models.CharField(_("Title"), max_length=255)

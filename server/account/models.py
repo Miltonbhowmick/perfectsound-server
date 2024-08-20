@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from .managers import UserProfileManager
 from .utils.choices import *
 from .utils.utils import generate_otp
-from .emails import send_otp_email
+from .emails import send_otp_email, newsletter_email
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -71,3 +71,22 @@ class Verification(models.Model):
 
     def __str__(self):
         return str(self.email)
+
+
+class Newsletter(models.Model):
+    email = models.EmailField()
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    attachments = models.FileField(upload_to="newsletters/", null=True, blank=True)
+
+    def __str__(self):
+        return self.email
+
+    def send_newsletter(self):
+        if self.email:
+            if self.attachments:
+                newsletter_email(
+                    self.email, self.name, self.description, self.attachments
+                )
+            else:
+                newsletter_email(self.email, self.name, self.description)
