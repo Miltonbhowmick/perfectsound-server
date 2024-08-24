@@ -7,7 +7,6 @@ from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.snippets.models import register_snippet
 
-
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255, blank=True, null=True)
     slug = models.SlugField(_("Slug"), max_length=55, unique=True, blank=True)
@@ -55,17 +54,6 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.track}"
-
-
-class Newsletter(models.Model):
-    email = models.EmailField()
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    attachments = models.FileField(upload_to="newsletters/", null=True, blank=True)
-
-    def __str__(self):
-        return self.email
-
 
 @register_setting
 class FooterMenu(BaseGenericSetting):
