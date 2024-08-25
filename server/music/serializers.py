@@ -12,7 +12,7 @@ class MinimalTrackSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "audio_file",
-            "duration",
+            "duration_seconds",
             "beats",
             "release_date",
             "created_at",
