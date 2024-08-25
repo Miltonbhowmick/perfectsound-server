@@ -4,6 +4,8 @@ from .models import *
 
 
 class MinimalTrackSerializer(serializers.ModelSerializer):
+    beats = serializers.SerializerMethodField()
+
     class Meta:
         model = Track
         fields = [
@@ -16,6 +18,20 @@ class MinimalTrackSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
+
+    def get_beats(self, obj):
+        """
+        Method to convert the JSON string stored in the `beats` field
+        back into a Python list (array format).
+        """
+        if obj.beats:
+            try:
+                # Attempt to parse the JSON string to a Python list
+                return json.loads(obj.beats)
+            except (json.JSONDecodeError, TypeError):
+                # If there's an error in parsing, return an empty list or handle as needed
+                return []
+        return []
 
 
 class TrackSerializer(serializers.ModelSerializer):
