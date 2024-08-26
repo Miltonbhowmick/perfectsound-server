@@ -150,6 +150,10 @@ class SigninSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     {"email": ["Account is blocked! Please contact support!"]}
                 )
+            if not user.is_email_verified:
+                raise serializers.ValidationError(
+                    {"email": ["Account email is not verified!"]}
+                )
         return validated_data
 
     def signin(self):
