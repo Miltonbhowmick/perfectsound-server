@@ -79,6 +79,7 @@ class Track(models.Model):
     )
     audio_file = models.FileField(upload_to="tracks/")
     duration = models.DurationField(null=True, blank=True)
+    duration_seconds = models.IntegerField(null=True, blank=True)
     beats = models.TextField(
         _("Beats"),
         blank=True,
@@ -100,6 +101,7 @@ class Track(models.Model):
             audio = File(self.audio_file)
             if audio and audio.info:
                 self.duration = timedelta(seconds=int(audio.info.length))
+                self.duration_seconds = audio.info.length
         super().save(*args, **kwargs)
 
     def generate_beats(self):

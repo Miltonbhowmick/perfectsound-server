@@ -7,7 +7,6 @@ from wagtail.contrib.settings.models import BaseGenericSetting, register_setting
 from wagtail.admin.panels import FieldPanel, MultiFieldPanel
 from wagtail.snippets.models import register_snippet
 
-
 class Category(models.Model):
     name = models.CharField(_("Name"), max_length=255, blank=True, null=True)
     slug = models.SlugField(_("Slug"), max_length=55, unique=True, blank=True)
@@ -55,7 +54,6 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f"{self.user} - {self.track}"
-
 
 @register_setting
 class FooterMenu(BaseGenericSetting):

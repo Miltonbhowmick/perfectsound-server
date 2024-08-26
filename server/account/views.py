@@ -24,7 +24,6 @@ class PublicUserViewset(viewsets.ModelViewSet):
         {
             "email": "email",
             "password": "password",
-            "confirm_password":"confirm_password",
         }
         """
         serializer = self.serializer_class(data=request.data)
@@ -139,4 +138,21 @@ class PublicUserViewset(viewsets.ModelViewSet):
         if serializer.is_valid():
             user = serializer.change_password()
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        methods=["post"],
+        permission_classes=(AllowAny,),
+        serializer_class=NewsletterCreateSerializer,
+    )
+    def newsletter(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            newsletter = serializer.save()
+            newsletter.send_newsletter()
+            return Response(
+                NewsletterSerializer(newsletter).data,
+                status=status.HTTP_201_CREATED,
+            )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
