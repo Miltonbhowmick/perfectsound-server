@@ -152,7 +152,7 @@ class SigninSerializer(serializers.Serializer):
                 )
             if not user.is_email_verified:
                 raise serializers.ValidationError(
-                    {"email": ["Account email is not verified!"]}
+                    {"verification": ["Account email is not verified!"]}
                 )
         return validated_data
 
