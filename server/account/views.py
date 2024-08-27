@@ -142,6 +142,39 @@ class PublicUserViewset(viewsets.ModelViewSet):
 
     @action(
         detail=False,
+        methods=["get", "patch", "delete"],
+        serializer_class=UserSerializer,
+        permission_classes=(IsAuthenticated,),
+    )
+    def profile(self, request, pk=None):
+        """
+        {
+            "nickname": "",
+            "email": "",
+            "gender": 0,1,2
+            "birth_year": year,
+        }
+        """
+        user = request.user
+
+        if self.request.method == "GET":
+            data = self.serializer_class(user).data
+            return Response(data, status=status.HTTP_200_OK)
+        elif self.request.method == "PATCH":
+            serializer = self.serializer_class(
+                instance=user, data=request.data, partial=True
+            )
+            if serializer.is_valid():
+                user_obj = serializer.save()
+                data = UserSerializer(user_obj).data
+                return Response(data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif self.request.method == "DELETE":
+            obj = user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
         methods=["post"],
         permission_classes=(AllowAny,),
         serializer_class=NewsletterCreateSerializer,
