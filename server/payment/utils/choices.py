@@ -2,7 +2,7 @@ from django.db import models
 
 
 class DurationChoices(models.TextChoices):
+    WEEK = "week", "Week"
     MONTH = "month", "Month"
-    SIX_MONTH = "six_month", "Six Month"
-    ANNUAL = "annual", "Annual"
+    ANNUAL = "year", "Year"
     CUSTOM = "custom", "Custom"

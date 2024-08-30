@@ -23,6 +23,7 @@ class PricePlanSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "order",
+            "title",
             "duration",
             "duration_unit",
             "description",

@@ -24,6 +24,7 @@ class PricePlanCredit(models.Model):
 
 class PricePlan(models.Model):
     order = models.IntegerField(_("Serial Order"), default=1, blank=True, null=True)
+    title = models.CharField(_("Title"), max_length=155, blank=True, null=True)
     duration = models.CharField(
         _("Duration"),
         choices=DurationChoices,
