@@ -20,4 +20,12 @@ class PricePlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PricePlan
-        fields = ["id", "duration", "duration_unit", "description", "amount", "credits"]
+        fields = [
+            "id",
+            "order",
+            "duration",
+            "duration_unit",
+            "description",
+            "amount",
+            "credits",
+        ]

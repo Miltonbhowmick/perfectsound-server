@@ -21,3 +21,7 @@ class PublicPricePlanViewset(viewsets.ModelViewSet):
     queryset = PricePlan.objects.all()
     serializer_class = PricePlanSerializer
     permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        qs = self.queryset.order_by("order")
+        return qs
