@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from ckeditor.fields import RichTextField
 
 from .utils.choices import *
 
@@ -35,9 +36,7 @@ class PricePlan(models.Model):
     duration_unit = models.IntegerField(
         _("Duration Unit"), default=0, null=True, blank=True
     )
-    description = models.TextField(
-        _("Description"), max_length=755, null=True, blank=True
-    )
+    description = RichTextField()
     amount = models.DecimalField(
         _("Plan Amount"),
         default=0,

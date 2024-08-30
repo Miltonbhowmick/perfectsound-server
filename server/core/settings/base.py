@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework.authtoken",
+    "ckeditor",
     "home",
     "search",
     "account",
@@ -238,3 +239,5 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_USER = config("PERFECTSOUND_EMAIL")
 EMAIL_HOST_PASSWORD = config("PERFECTSOUND_EMAIL_PASSWORD")
+
+CKEDITOR_CONFIGS = {"default": {}}
