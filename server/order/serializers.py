@@ -12,9 +12,6 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateSerializer(serializers.Serializer):
-    user = serializers.PrimaryKeyRelatedField(
-        queryset=User.objects.all(), required=False, allow_null=True
-    )
     first_name = serializers.CharField(max_length=255, required=True)
     last_name = serializers.CharField(max_length=255, required=True)
     phone_number = serializers.CharField(max_length=100, required=True)

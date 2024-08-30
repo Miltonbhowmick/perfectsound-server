@@ -11,19 +11,19 @@ class PublicOrderViewset(viewsets.ModelViewSet):
     """
     {
         "id": 8,
-        "first_name": null,
-        "last_name": null,
-        "phone_number": null,
-        "company": null,
-        "address1": null,
-        "address2": null,
-        "country": null,
-        "city": null,
-        "street": null,
+        "first_name": "",
+        "last_name": "",
+        "phone_number": "",
+        "company": "",
+        "address1": "",
+        "address2": "",
+        "country": "",
+        "city": "",
+        "state": "",
+        "zip_code": "",
         "is_agreed_policy": false,
-        "user": 2,
-        "price_plan": null,
-        "promo_code": null
+        "price_plan": 3,
+        "promo_code": promo_code,
     }
     """
 

@@ -24,12 +24,8 @@ class Order(models.Model):
         blank=True,
         related_name="orders",
     )
-    promo_code = models.ForeignKey(
-        "payment.PromoCode",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="orders",
+    promo_code = models.CharField(
+        _("Promo Code"), max_length=255, null=True, blank=True
     )
     company = models.CharField(_("Company"), max_length=255, null=True, blank=True)
     address1 = models.TextField(_("Address 1"), max_length=255, null=True, blank=True)
@@ -41,4 +37,4 @@ class Order(models.Model):
     is_agreed_policy = models.BooleanField(_("Is Agreed Policy"), default=False)
 
     def __str__(self):
-        return self.first_name
+        return f"{self.first_name}-{self.company}"
