@@ -37,6 +37,7 @@ class Order(models.Model):
     country = models.CharField(_("Country"), max_length=255, null=True, blank=True)
     city = models.CharField(_("City"), max_length=255, null=True, blank=True)
     street = models.TextField(_("Street"), max_length=255, null=True, blank=True)
+    zip_code = models.TextField(_("Zip Code"), max_length=255, null=True, blank=True)
     is_agreed_policy = models.BooleanField(_("Is Agreed Policy"), default=False)
 
     def __str__(self):
