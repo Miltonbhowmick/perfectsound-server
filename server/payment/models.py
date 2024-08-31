@@ -7,7 +7,10 @@ from .utils.choices import *
 
 class PromoCode(models.Model):
     title = models.CharField(_("Title"), max_length=255, null=True, blank=True)
+    percentage = models.IntegerField(_("Percentage"), default=0)
     is_active = models.BooleanField(_("Is active"), default=False)
+    start_date = models.DateTimeField(_("Start date"), null=True, blank=True)
+    end_date = models.DateTimeField(_("End date"), null=True, blank=True)
 
     def __str__(self):
         return self.title
