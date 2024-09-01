@@ -31,6 +31,12 @@ class ApplyPromoCodeSerializer(serializers.Serializer):
                 raise serializers.ValidationError(
                     "Promo Code is currently not available"
                 )
+        return value
+
+    def save(self):
+        code = self.validated_data.get("code")
+        promo_code = PromoCode.objects.get(title=code)
+        return promo_code
 
 
 class PricePlanCreditSerializer(serializers.ModelSerializer):

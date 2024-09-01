@@ -22,11 +22,9 @@ class PublicPromoCodeViewset(viewsets.ModelViewSet):
     def promo_validate(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            promo_code = serializer.save()
             return Response(
-                {
-                    "valid": True,
-                    "error": "Promo code is currently valid.",
-                },
+                PromoCodeSerializer(promo_code).data,
                 status=status.HTTP_200_OK,
             )
         return Response(
