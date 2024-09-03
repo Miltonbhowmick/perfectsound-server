@@ -11,6 +11,22 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ("password", "user_permissions", "groups")
+        read_only_fields = ("is_email_verified", "is_staff", "is_superuser")
+
+    def update(self, instance, validated_data):
+        email_changed = False
+        if validated_data.get("email"):
+            if instance.email != validated_data["email"]:
+                email_changed = True
+
+        print(validated_data)
+        user = super().update(instance, validated_data)
+
+        if email_changed == True:
+            user.is_email_verified = False
+            user.save()
+            user.send_verification_code(reason=None, email=instance.email)
+        return user
 
 
 class SignupSerializer(serializers.Serializer):
@@ -289,7 +305,6 @@ class VerifyPasswordSerializer(serializers.Serializer):
 
     def validate_password(self, value):
         user = self.context["user"]
-        print(user.check_password(value), "<<<<")
         if not user.check_password(value):
             raise serializers.ValidationError("Password is incorrect!")
         return value

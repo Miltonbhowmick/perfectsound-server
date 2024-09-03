@@ -156,7 +156,6 @@ class PublicUserViewset(viewsets.ModelViewSet):
         }
         """
         user = request.user
-
         if self.request.method == "GET":
             data = self.serializer_class(user).data
             return Response(data, status=status.HTTP_200_OK)
