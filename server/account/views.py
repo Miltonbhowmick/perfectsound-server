@@ -176,6 +176,19 @@ class PublicUserViewset(viewsets.ModelViewSet):
     @action(
         detail=False,
         methods=["post"],
+        permission_classes=(IsAuthenticated,),
+        serializer_class=VerifyPasswordSerializer,
+    )
+    def verification(self, request):
+        user = request.user
+        serializer = self.serializer_class(data=request.data, context={"user": user})
+        if serializer.is_valid():
+            return Response()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(
+        detail=False,
+        methods=["post"],
         permission_classes=(AllowAny,),
         serializer_class=NewsletterCreateSerializer,
     )

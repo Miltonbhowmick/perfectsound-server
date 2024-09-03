@@ -284,6 +284,17 @@ class ChangePasswordSerializer(serializers.Serializer):
         return user
 
 
+class VerifyPasswordSerializer(serializers.Serializer):
+    password = serializers.CharField(style={"input_type": "password"})
+
+    def validate_password(self, value):
+        user = self.context["user"]
+        print(user.check_password(value), "<<<<")
+        if not user.check_password(value):
+            raise serializers.ValidationError("Password is incorrect!")
+        return value
+
+
 class NewsletterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Newsletter
