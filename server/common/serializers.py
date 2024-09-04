@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import *
 from music.models import Track
-from music.serializers import MinimalTrackSerializer
+from music.serializers import MinimalFavouriteTrackSerializer
 
 
 class MinimalSubCategorySerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
-    track = MinimalTrackSerializer()
+    track = MinimalFavouriteTrackSerializer()
 
     class Meta:
         model = Favorite
