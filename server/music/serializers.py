@@ -41,9 +41,12 @@ class MinimalTrackSerializer(serializers.ModelSerializer):
         Method to get this track is favorite listed of the request user.
         """
         user = self.context.get("user", None)
-        if user and user.is_authenticated:
-            return Favorite.objects.filter(user=user, track=obj).exists()
-        return False
+        try:
+            if user and user.is_authenticated:
+                return Favorite.objects.get(user=user, track=obj).id
+        except:
+            return None
+        return None
 
 
 class MinimalFavouriteTrackSerializer(serializers.ModelSerializer):
