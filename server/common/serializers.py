@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import *
+from music.models import Track
 from music.serializers import MinimalTrackSerializer
 
 
@@ -33,3 +34,27 @@ class FavouriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ["id", "track"]
+
+
+class FavouriteTrackCreateSerializer(serializers.Serializer):
+    track = serializers.IntegerField()
+
+    def validate_track(self, value):
+        user = self.context["user"]
+        if value:
+            if not Track.objects.filter(id=value).exists():
+                raise serializers.ValidationError(
+                    {"track": "This track is not available now."}
+                )
+            if Favorite.objects.filter(user=user, track_id=value).exists():
+                raise serializers.ValidationError(
+                    {"track": "This track is already in favourite list."}
+                )
+        return value
+
+    def create(self, validated_data):
+        track = validated_data.get("track")
+        user = self.context["user"]
+        track_obj = Track.objects.get(id=track)
+        new_favorite = Favorite.objects.create(user=user, track=track_obj)
+        return new_favorite
