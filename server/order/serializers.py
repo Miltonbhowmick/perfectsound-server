@@ -18,8 +18,9 @@ class OrderCreateSerializer(serializers.Serializer):
         max_length=100, required=False, allow_blank=True, allow_null=True
     )
     price_plan = serializers.PrimaryKeyRelatedField(queryset=PricePlan.objects.all())
-    promo_code = serializers.CharField(
-        max_length=255, required=False, allow_blank=True, allow_null=True
+    promo_code = serializers.PrimaryKeyRelatedField(
+        queryset=PromoCode.objects.all(),
+        required=False,
     )
     company = serializers.CharField(
         max_length=255, required=False, allow_blank=True, allow_null=True

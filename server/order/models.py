@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from .utils.choices import OrderStatusChoice
+
 
 class Order(models.Model):
     user = models.ForeignKey(
@@ -24,8 +26,13 @@ class Order(models.Model):
         blank=True,
         related_name="orders",
     )
-    promo_code = models.CharField(
-        _("Promo Code"), max_length=255, null=True, blank=True
+    promo_code = models.ForeignKey(
+        "payment.PromoCode",
+        max_length=255,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="orders",
     )
     company = models.CharField(_("Company"), max_length=255, null=True, blank=True)
     address1 = models.TextField(_("Address 1"), max_length=255, null=True, blank=True)
@@ -35,6 +42,12 @@ class Order(models.Model):
     state = models.TextField(_("State"), max_length=255, null=True, blank=True)
     zip_code = models.TextField(_("Zip Code"), max_length=255, null=True, blank=True)
     is_agreed_policy = models.BooleanField(_("Is Agreed Policy"), default=False)
+    status = models.CharField(
+        choices=OrderStatusChoice,
+        default=OrderStatusChoice.PENDING,
+        blank=True,
+        null=True,
+    )
 
     def __str__(self):
         return f"{self.first_name}-{self.company}"
