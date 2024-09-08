@@ -10,7 +10,7 @@ router = DefaultRouter()
 router.register(r"price-plans", PublicPricePlanViewset, basename="priceplans")
 router.register(r"promo-codes", PublicPromoCodeViewset, basename="promocodes")
 router.register(
-    r"price-plan-credits", PublicPromoCodeViewset, basename="priceplancredits"
+    r"price-plan-credits", PublicPricePlanCreditViewset, basename="priceplancredits"
 )
 
 urlpatterns = [

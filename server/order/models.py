@@ -26,6 +26,13 @@ class Order(models.Model):
         blank=True,
         related_name="orders",
     )
+    price_plan_credit = models.ForeignKey(
+        "payment.PricePlanCredit",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="orders",
+    )
     promo_code = models.ForeignKey(
         "payment.PromoCode",
         max_length=255,

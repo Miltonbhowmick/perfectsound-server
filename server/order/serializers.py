@@ -2,7 +2,8 @@ from rest_framework import serializers
 
 from .models import *
 from account.models import User
-from payment.models import PricePlan, PromoCode
+from payment.models import PricePlan, PromoCode, PricePlanCredit
+from payment.utils.choices import DurationChoices
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -22,6 +23,10 @@ class OrderCreateSerializer(serializers.Serializer):
         queryset=PromoCode.objects.all(),
         required=False,
     )
+    credit = serializers.PrimaryKeyRelatedField(
+        queryset=PricePlanCredit.objects.all(),
+        required=False,
+    )
     company = serializers.CharField(
         max_length=255, required=False, allow_blank=True, allow_null=True
     )
@@ -37,8 +42,13 @@ class OrderCreateSerializer(serializers.Serializer):
 
     def create(self, validated_data):
         user = self.context["user"]
+        credit = validated_data.pop("credit", None)
         new_order = Order.objects.create(**validated_data)
+        if new_order.price_plan.duration == DurationChoices.CUSTOM:
+            new_order.price_plan_credit = credit
+
         if user:
             new_order.user = user
-            new_order.save()
+
+        new_order.save()
         return new_order
