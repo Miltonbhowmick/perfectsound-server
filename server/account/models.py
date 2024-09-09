@@ -90,3 +90,25 @@ class Newsletter(models.Model):
                 )
             else:
                 newsletter_email(self.email, self.name, self.description)
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="subscriptions",
+    )
+    order = models.OneToOneField(
+        "order.Order",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
+    is_active = models.IntegerField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.user.email

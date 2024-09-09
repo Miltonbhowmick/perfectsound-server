@@ -27,3 +27,10 @@ class VerificationAdmin(admin.ModelAdmin):
 
 admin.site.register(Verification, VerificationAdmin)
 admin.site.register(Newsletter)
+
+
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ("user", "order", "created_at", "updated_at")
+
+
+admin.site.register(Subscription, SubscriptionAdmin)

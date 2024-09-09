@@ -6,6 +6,7 @@ app_name = "account"
 
 router = DefaultRouter()
 router.register(r"users", PublicUserViewset, basename="users")
+router.register(r"subscriptions", PublicSubscriptionViewset, basename="subscriptions")
 
 
 urlpatterns = [path("public/", include(router.urls))]

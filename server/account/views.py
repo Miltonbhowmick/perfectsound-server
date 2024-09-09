@@ -4,9 +4,12 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import *
 from .serializers import *
+from .filters import *
+from order.utils.choices import OrderStatusChoice
 
 
 class PublicUserViewset(viewsets.ModelViewSet):
@@ -201,3 +204,26 @@ class PublicUserViewset(viewsets.ModelViewSet):
                 status=status.HTTP_201_CREATED,
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PublicSubscriptionViewset(viewsets.ModelViewSet):
+    queryset = Subscription.objects.all()
+    permission_classes = (IsAuthenticated,)
+    serializer_class = SubscriptionSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = SubscriptionFilter
+
+    def get_queryset(self):
+        user = self.request.user
+        return Subscription.objects.filter(user=user)
+
+    @action(detail=False, methods=["get"], url_path="latest")
+    def latest_subscription(self, request):
+        latest_subscription = self.get_queryset().order_by("-id").first()
+        if latest_subscription:
+            serializer = self.get_serializer(latest_subscription)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"valid": False, "detail": "No subscription found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )

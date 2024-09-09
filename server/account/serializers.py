@@ -5,6 +5,7 @@ import re
 import random
 from .models import *
 from .auth_backend import UsernameOrEmailModelBackend
+from order.serializers import OrderSerializer
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -325,3 +326,11 @@ class NewsletterCreateSerializer(serializers.Serializer):
     def create(self, validated_data):
         newsletter = Newsletter.objects.create(**validated_data)
         return newsletter
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    order = OrderSerializer(read_only=True)
+
+    class Meta:
+        model = Subscription
+        fields = "__all__"

@@ -2,4 +2,9 @@ from django.contrib import admin
 
 from .models import *
 
-admin.site.register(Order)
+
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ("user", "price_plan", "created_at", "updated_at")
+
+
+admin.site.register(Order, OrderAdmin)

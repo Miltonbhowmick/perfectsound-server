@@ -3,10 +3,13 @@ from rest_framework import serializers
 from .models import *
 from account.models import User
 from payment.models import PricePlan, PromoCode, PricePlanCredit
+from payment.serializers import PricePlanSerializer
 from payment.utils.choices import DurationChoices
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    price_plan = PricePlanSerializer()
+
     class Meta:
         model = Order
         fields = "__all__"

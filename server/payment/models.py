@@ -39,7 +39,7 @@ class PricePlan(models.Model):
     duration_unit = models.IntegerField(
         _("Duration Unit"), default=0, null=True, blank=True
     )
-    description = RichTextField()
+    description = RichTextField(blank=True, null=True)
     amount = models.DecimalField(
         _("Plan Amount"),
         default=0,
