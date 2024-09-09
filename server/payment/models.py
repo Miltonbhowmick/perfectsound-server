@@ -51,4 +51,4 @@ class PricePlan(models.Model):
     credit = models.ManyToManyField(PricePlanCredit, blank=True)
 
     def __str__(self):
-        return self.duration
+        return self.title

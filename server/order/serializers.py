@@ -2,13 +2,18 @@ from rest_framework import serializers
 
 from .models import *
 from account.models import User
-from payment.models import PricePlan, PromoCode, PricePlanCredit
-from payment.serializers import PricePlanSerializer
+from payment.models import (
+    PricePlan,
+    PromoCode,
+    PricePlanCredit,
+)
+from payment.serializers import PricePlanSerializer, PricePlanCreditSerializer
 from payment.utils.choices import DurationChoices
 
 
 class OrderSerializer(serializers.ModelSerializer):
     price_plan = PricePlanSerializer()
+    price_plan_credit = PricePlanCreditSerializer()
 
     class Meta:
         model = Order
