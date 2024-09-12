@@ -15,4 +15,9 @@ router.register(
 
 urlpatterns = [
     path("public/", include(router.urls)),
+    path(
+        "stripe/setup-intent/",
+        CreateStripeSetupIntent.as_view(),
+        name="stripe-setup-intent",
+    ),
 ]

@@ -52,3 +52,54 @@ class PricePlan(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class SavePaymentMethod(models.Model):
+    user = models.ForeignKey(
+        "account.User",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="save_payment_methods",
+    )
+    method_type = models.CharField(
+        max_length=65, choices=PaymentMethodTypeChoices.choices
+    )
+    stripe_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="Stripe Payment Method ID (If Stripe is used)",
+    )
+    paypal_id = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        help_text="PayPal Account ID (if PayPal is used)",
+    )
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.method_type} - {self.user.email}"
+
+    def save(self, *args, **kwargs):
+        # Ensure that only one payment method is set as default for user
+        if self.is_default:
+            SavePaymentMethod.objects.filter(user=self.user).update(is_default=False)
+
+        return super().save(*args, **kwargs)
+
+
+class StripeCustomer(models.Model):
+    user = models.ForeignKey(
+        "account.User", on_delete=models.SET_NULL, blank=True, null=True
+    )
+    customer_id = models.CharField(
+        _("Stripe Customer ID"), max_length=255, null=True, blank=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.customer_id
