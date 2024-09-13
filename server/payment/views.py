@@ -66,20 +66,100 @@ class CreateStripeSetupIntent(APIView):
 
     def post(self, request):
         user = request.user
+        stripe_user, created = StripeCustomer.objects.get_or_create(user=user)
 
-        if (
-            StripeCustomer.objects.filter(user=user)
-            .filter(Q(customer_id__isnull=False))
-            .exists()
-            == False
-        ):
+        if created:
             # Create customer on stripe
             customer = stripe.Customer.create(email=user.email, name=user.username)
-            print(customer)
-            stripe_user = StripeCustomer.objects.create(
-                user=user, customer_id=customer.id
-            )
+            stripe_user.customer_id = customer.id
+            stripe_user.save()
+
+        if stripe_user == None:
+            return Response({"client_secret": None}, status=status.HTTP_404_NOT_FOUND)
 
         intent = stripe.SetupIntent.create(customer=stripe_user.customer_id)
 
-        return Response({"client_secret": intent.client_secret})
+        return Response(
+            {"client_secret": intent.client_secret}, status=status.HTTP_201_CREATED
+        )
+
+
+class RetrieveStripePaymentMethods(APIView):
+    """
+       {
+      "data": [
+        {
+          "allow_redisplay": "unspecified",
+          "billing_details": {
+            "address": {
+              "city": null,
+              "country": "BD",
+              "line1": null,
+              "line2": null,
+              "postal_code": null,
+              "state": null
+            },
+            "email": null,
+            "name": null,
+            "phone": null
+          },
+          "card": {
+            "brand": "visa",
+            "checks": {
+              "address_line1_check": null,
+              "address_postal_code_check": null,
+              "cvc_check": "pass"
+            },
+            "country": "US",
+            "display_brand": "visa",
+            "exp_month": 1,
+            "exp_year": 2039,
+            "fingerprint": "9asdnaskdn1",
+            "funding": "credit",
+            "generated_from": null,
+            "last4": "4242",
+            "networks": {
+              "available": [
+                "visa"
+              ],
+              "preferred": null
+            },
+            "three_d_secure_usage": {
+              "supported": true
+            },
+            "wallet": null
+          },
+          "created": 0120232,
+          "customer": "cus_Onidas92snd",
+          "id": "pm_4o2josDaosdnsdsd",
+          "livemode": false,
+          "metadata": {},
+          "object": "payment_method",
+          "type": "card"
+        }
+      ],
+      "has_more": false,
+      "object": "list",
+      "url": "/v1/payment_methods"
+    }
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        try:
+            stripe_customer = StripeCustomer.objects.get(user=user)
+        except StripeCustomer.DoesNotExist:
+            return Response(
+                {"error": "No Stripe customer found for this user'"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        try:
+            payment_methods = stripe.PaymentMethod.list(
+                customer=stripe_customer.customer_id
+            )
+            return Response(payment_methods["data"], status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

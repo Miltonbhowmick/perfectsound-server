@@ -18,6 +18,11 @@ urlpatterns = [
     path(
         "stripe/setup-intent/",
         CreateStripeSetupIntent.as_view(),
-        name="stripe-setup-intent",
+        name="stripe_setup_intent",
+    ),
+    path(
+        "stripe/payment-methods/",
+        RetrieveStripePaymentMethods.as_view(),
+        name="stripe_payment_methods",
     ),
 ]
