@@ -7,6 +7,7 @@ from wagtail import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from search import views as search_views
+from music.views import download_audio_file
 
 urlpatterns = [
     path("django-admin/", admin.site.urls),
@@ -18,6 +19,7 @@ urlpatterns = [
     path("api/v1/music/", include("music.urls", namespace="music")),
     path("api/v1/payment/", include("payment.urls", namespace="payment")),
     path("api/v1/order/", include("order.urls", namespace="order")),
+    path("media/download/<path:path>/", download_audio_file, name="download_audio"),
 ]
 
 
@@ -28,6 +30,7 @@ if settings.DEBUG:
     # Serve static and media files from development server
     urlpatterns += staticfiles_urlpatterns()
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 
 urlpatterns = urlpatterns + [
     path("", include(wagtail_urls)),

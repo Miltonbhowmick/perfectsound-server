@@ -25,4 +25,9 @@ urlpatterns = [
         RetrieveStripePaymentMethods.as_view(),
         name="stripe_payment_methods",
     ),
+    path(
+        "stripe/payment-confirm/",
+        ConfirmPaymentView.as_view(),
+        name="stripe_payment_confirm",
+    ),
 ]

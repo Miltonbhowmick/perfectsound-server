@@ -1,3 +1,7 @@
+from django.http import HttpResponse, Http404
+from django.conf import settings
+import os
+
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
@@ -48,3 +52,18 @@ class PublicGenreViewset(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = GenreSerializer
+
+
+def download_audio_file(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+
+    # Check if the file exists
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            response = HttpResponse(f.read(), content_type="audio/mpeg")
+            response["Content-Disposition"] = (
+                f'attachment; filename="{os.path.basename(file_path)}"'
+            )
+            return response
+    else:
+        raise Http404

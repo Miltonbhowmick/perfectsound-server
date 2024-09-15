@@ -30,7 +30,7 @@ admin.site.register(Newsletter)
 
 
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ("user", "order", "created_at", "updated_at")
+    list_display = ("user", "is_active", "order", "created_at", "updated_at")
 
 
 admin.site.register(Subscription, SubscriptionAdmin)
