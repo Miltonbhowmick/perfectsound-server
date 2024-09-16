@@ -60,3 +60,33 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.first_name}-{self.company}"
+
+
+class Download(models.Model):
+    user = models.ForeignKey("account.User", on_delete=models.CASCADE)
+    track = models.ForeignKey("music.Track", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user
+
+
+class Transaction(models.Model):
+    user = models.ForeignKey("account.User", on_delete=models.CASCADE)
+    track = models.ForeignKey("music.Track", on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user
+
+
+class UserCredits(models.Model):
+    user = models.OneToOneField(
+        "account.User", on_delete=models.CASCADE, related_name="credits"
+    )
+    total_credits = models.PositiveIntegerField(default=0)
+    used_credits = models.PositiveIntegerField(default=0)
+    remaining_credits = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.user}-{self.used_credits}"

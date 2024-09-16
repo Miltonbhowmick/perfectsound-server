@@ -8,3 +8,6 @@ class OrderAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Order, OrderAdmin)
+admin.site.register(UserCredits)
+admin.site.register(Transaction)
+admin.site.register(Download)

@@ -10,7 +10,7 @@ from django.db.models import Q
 from .models import *
 from .serializers import *
 from account.models import Subscription
-from order.models import Order
+from order.models import Order, UserCredits
 from order.utils.choices import OrderStatusChoice
 
 import stripe
@@ -173,9 +173,9 @@ class ConfirmPaymentView(APIView):
 
     def post(self, request):
         payment_method_id = request.data.get("payment_method_id")
-        price_plan_id = request.data.get("price_plan_id")
+        subscription_plan_id = request.data.get("subscription_plan_id")
         # Ensure both payment_method_id and price_plan_id are provided
-        if not payment_method_id or not price_plan_id:
+        if not payment_method_id or not subscription_plan_id:
             return Response(
                 {"error": "Payment method or subscription plan not provided."},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -183,18 +183,20 @@ class ConfirmPaymentView(APIView):
 
         try:
             # Get the subscription plan (Assuming you have a SubscriptionPlan model)
-            subscription_plan = PricePlan.objects.get(id=price_plan_id)
+            user_subscription = Subscription.objects.get(id=subscription_plan_id)
 
+            # Calculate amount from subscription plan & ADD PROMO CODE discount if remains
+            promo_code_percentage = user_subscription.order.promo_code.percentage
+            total_amount = user_subscription.order.price_plan.amount
+            if promo_code_percentage:
+                total_amount = (total_amount * promo_code_percentage) // 2
             # Calculate the amount in cents (Stripe requires amounts in cents)
-            amount_in_cents = int(
-                subscription_plan.amount * 100
-            )  # Assuming price is in dollars
+            amount_in_cents = int(total_amount * 100)  # Assuming price is in dollars
 
             # Get the customer's Stripe ID (Assuming you have a field in your User model for this)
             stripe_customer_id = StripeCustomer.objects.get(
                 user=request.user
             ).customer_id
-
             # Create a payment intent
             payment_intent = stripe.PaymentIntent.create(
                 amount=amount_in_cents,  # Amount in cents
@@ -205,12 +207,17 @@ class ConfirmPaymentView(APIView):
                 off_session=True,  # Allow off-session payments
             )
 
-            user_subscription = Subscription.objects.get(user=request.user)
             user_subscription.is_active = True
             user_subscription.save()
             subscription_order = Order.objects.get(id=user_subscription.order.id)
             subscription_order.status = OrderStatusChoice.COMPLETED
             subscription_order.save()
+
+            # Initialize user credits amounts
+            user_credits, created = UserCredits.objects.get_or_create(user=request.user)
+            user_credits.total_credits = user_subscription.order.price_plan.amount
+            user_credits.remaining_credits = user_subscription.order.price_plan.amount
+            user_credits.save()
 
             return Response(
                 {

@@ -7,8 +7,10 @@ from payment.models import (
     PromoCode,
     PricePlanCredit,
 )
+from music.models import Track
 from payment.serializers import PricePlanSerializer, PricePlanCreditSerializer
 from payment.utils.choices import DurationChoices
+from account.models import Subscription
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -57,6 +59,49 @@ class OrderCreateSerializer(serializers.Serializer):
 
         if user:
             new_order.user = user
-
         new_order.save()
+
+        # Create subscription based on the order
+        # But the subscription will not active until payment complete
+        new_subscription = Subscription.objects.create(user=user, order=new_order)
+
         return new_order
+
+
+class DownloadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Download
+        fields = "__all__"
+
+    def create(self, validated_data):
+        user = self.context["user"]
+        track_id = validated_data.get("track_id", None)
+        if track_id:
+            try:
+                track = Track.objects.get(track_id)
+                # Download music
+                download_music, created = Download.objects.get_or_create(
+                    user=user, track=track
+                )
+                if created:
+                    # New transaction on download music
+                    new_transaction = Transaction.objects.create(user=user, track=track)
+                    # Re-calculate user credits amount
+                    user_credits = UserCredits.objects.get(user=user)
+                    user_credits.used_credits += track.credits
+                    user_credits.remaining_credits -= track.credits
+                    user_credits.save()
+                else:
+                    raise serializers.ValidationError(
+                        {"valid": False, "error": "You have already download music"}
+                    )
+
+            except Track.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"valid": False, "error": "Music track is not exists!"}
+                )
+
+        else:
+            raise serializers.ValidationError(
+                {"valid": False, "error": "Track must be provided!"}
+            )

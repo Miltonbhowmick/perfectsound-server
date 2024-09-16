@@ -85,6 +85,7 @@ class Track(models.Model):
         blank=True,
         null=True,
     )
+    credits = models.PositiveSmallIntegerField(default=3, null=True, blank=True)
     release_date = models.DateField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
