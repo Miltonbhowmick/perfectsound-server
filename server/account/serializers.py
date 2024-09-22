@@ -20,7 +20,6 @@ class UserSerializer(serializers.ModelSerializer):
             if instance.email != validated_data["email"]:
                 email_changed = True
 
-        print(validated_data)
         user = super().update(instance, validated_data)
 
         if email_changed == True:

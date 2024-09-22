@@ -186,7 +186,11 @@ class ConfirmPaymentView(APIView):
             user_subscription = Subscription.objects.get(id=subscription_plan_id)
 
             # Calculate amount from subscription plan & ADD PROMO CODE discount if remains
-            promo_code_percentage = user_subscription.order.promo_code.percentage
+            try:
+                promo_code_percentage = user_subscription.order.promo_code.percentage
+            except:
+                promo_code_percentage = None
+
             total_amount = user_subscription.order.price_plan.amount
             if promo_code_percentage:
                 total_amount = (total_amount * promo_code_percentage) // 2
