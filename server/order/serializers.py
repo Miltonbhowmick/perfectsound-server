@@ -54,8 +54,7 @@ class OrderCreateSerializer(serializers.Serializer):
         user = self.context["user"]
         credit = validated_data.pop("credit", None)
         new_order = Order.objects.create(**validated_data)
-        if new_order.price_plan.duration == DurationChoices.CUSTOM:
-            new_order.price_plan_credit = credit
+        new_order.price_plan_credit = credit
 
         if user:
             new_order.user = user

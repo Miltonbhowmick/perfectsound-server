@@ -44,11 +44,11 @@ class FavouriteTrackCreateSerializer(serializers.Serializer):
         if value:
             if not Track.objects.filter(id=value).exists():
                 raise serializers.ValidationError(
-                    {"track": "This track is not available now."}
+                    {"error": "This track is not available now."}
                 )
             if Favorite.objects.filter(user=user, track_id=value).exists():
                 raise serializers.ValidationError(
-                    {"track": "This track is already in favourite list."}
+                    {"error": "This track is already in favourite list."}
                 )
         return value
 
