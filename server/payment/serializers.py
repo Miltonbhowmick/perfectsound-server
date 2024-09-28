@@ -18,7 +18,7 @@ class ApplyPromoCodeSerializer(serializers.Serializer):
             try:
                 promo_code = PromoCode.objects.get(title=value)
             except:
-                raise serializers.ValidationError("Invalid Promo Code!")
+                raise serializers.ValidationError({"error": "Invalid Promo Code!"})
 
             now = timezone.now()
             if (
@@ -29,7 +29,7 @@ class ApplyPromoCodeSerializer(serializers.Serializer):
                 or promo_code.end_date < now
             ):
                 raise serializers.ValidationError(
-                    "Promo Code is currently not available"
+                    {"error": "Promo Code is currently not available"}
                 )
         return value
 

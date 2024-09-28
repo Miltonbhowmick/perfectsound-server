@@ -13,6 +13,8 @@ from account.models import Subscription
 from order.models import Order, UserCredits
 from order.utils.choices import OrderStatusChoice
 
+from core.settings import base as base_settings
+
 import stripe
 from decouple import config
 
@@ -64,7 +66,7 @@ class PublicPricePlanViewset(viewsets.ModelViewSet):
         return qs
 
 
-class CreateStripeSetupIntent(APIView):
+class CreateStripeSetupIntentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -204,7 +206,7 @@ class ConfirmPaymentView(APIView):
             # Create a payment intent
             payment_intent = stripe.PaymentIntent.create(
                 amount=amount_in_cents,  # Amount in cents
-                currency="usd",
+                currency=base_settings.PAYMENT_CURRENCY,
                 customer=stripe_customer_id,  # Customer's Stripe ID
                 payment_method=payment_method_id,
                 confirm=True,  # Automatically confirms the payment
@@ -250,6 +252,43 @@ class ConfirmPaymentView(APIView):
                 {"error": "Invalid subscription plan"}, status=status.HTTP_404_NOT_FOUND
             )
         except Exception as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class CreateStripePaymentIntentView(APIView):
+    def post(self, request):
+        amount = request.data.get("amount", None)
+        amount_in_cents = int(amount * 100)  # Assuming price is in dollars
+        user = request.user
+        try:
+            stripe_user, created = StripeCustomer.objects.get_or_create(user=user)
+
+            if created:
+                # Create customer on stripe
+                customer = stripe.Customer.create(email=user.email, name=user.username)
+                stripe_user.customer_id = customer.id
+                stripe_user.save()
+
+            if stripe_user == None:
+                return Response(
+                    {"client_secret": None}, status=status.HTTP_404_NOT_FOUND
+                )
+
+            payment_intent = stripe.PaymentIntent.create(
+                amount=amount_in_cents,
+                currency=base_settings.PAYMENT_CURRENCY,
+                customer=stripe_user.customer_id,  # Customer's Stripe ID
+                # automatic_payment_methods={"enabled": True},
+            )
+            return Response(
+                {"client_secret": payment_intent.client_secret},
+                status=status.HTTP_201_CREATED,
+            )
+
+        except Exception as e:
+            print(e)
             return Response(
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

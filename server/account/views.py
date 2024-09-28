@@ -10,6 +10,7 @@ from .models import *
 from .serializers import *
 from .filters import *
 from order.utils.choices import OrderStatusChoice
+from order.models import Order, UserCredits
 
 
 class PublicUserViewset(viewsets.ModelViewSet):
@@ -227,3 +228,23 @@ class PublicSubscriptionViewset(viewsets.ModelViewSet):
             {"valid": False, "detail": "No subscription found"},
             status=status.HTTP_404_NOT_FOUND,
         )
+
+    @action(detail=True, methods=["post"])
+    def active(self, request, pk=None):
+        subscription = self.get_object()
+        serializer = self.get_serializer(instance=subscription, data=request.data)
+        if serializer.is_valid():
+            subscription = serializer.save()
+
+            subscription_order = Order.objects.get(id=subscription.order.id)
+            subscription_order.status = OrderStatusChoice.COMPLETED
+            subscription_order.save()
+            # Initialize user credits amounts
+            user_credits, created = UserCredits.objects.get_or_create(user=request.user)
+            user_credits.total_credits = subscription.order.price_plan.amount
+            user_credits.remaining_credits = subscription.order.price_plan.amount
+            user_credits.save()
+            return Response(
+                self.get_serializer(subscription).data, status=status.HTTP_200_OK
+            )
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

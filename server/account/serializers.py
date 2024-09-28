@@ -333,3 +333,8 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
         fields = "__all__"
+
+    def update(self, instance, validated_data):
+        instance.is_active = True
+        instance.save()
+        return instance

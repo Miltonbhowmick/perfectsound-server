@@ -17,7 +17,7 @@ urlpatterns = [
     path("public/", include(router.urls)),
     path(
         "stripe/setup-intent/",
-        CreateStripeSetupIntent.as_view(),
+        CreateStripeSetupIntentView.as_view(),
         name="stripe_setup_intent",
     ),
     path(
@@ -29,5 +29,10 @@ urlpatterns = [
         "stripe/payment-confirm/",
         ConfirmPaymentView.as_view(),
         name="stripe_payment_confirm",
+    ),
+    path(
+        "stripe/payment-intent/",
+        CreateStripePaymentIntentView.as_view(),
+        name="stripe_payment_intent",
     ),
 ]
