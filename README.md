@@ -32,6 +32,7 @@ Before you begin, ensure you have the following installed:
 
 - Docker
 - Python 3.9+
+- Setup Stripe Account for test API keys. Please check `.env.example`
 
 ### Installation
 
