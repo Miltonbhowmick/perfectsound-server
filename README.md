@@ -46,6 +46,10 @@ Before you begin, ensure you have the following installed:
  	`docker-compose up server`  
 5. Open your web browser and access django admin of the application at http://localhost:8000/admin. [Please check the terminal which port is running for django]
 
+### API Collection
+
+- Please check API collection list from <a href="https://github.com/Miltonbhowmick/perfectsound-server/blob/main/perfectsound.postman_collection.json">here</a>
+
 ## License
 This project is licensed under the [MIT License](./LICENSE) - see the [LICENSE](./LICENSE) file for details.
 
