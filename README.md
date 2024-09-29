@@ -11,8 +11,6 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## About
@@ -24,7 +22,7 @@ Perfect sound is a music playing website where users buy new subscription and do
 - Playing music.
 - Bottom Player playing music along with Playing list music.
 - Subscription plan for a certain amount of time.
-- 
+  
 ## Getting Started
 
 Follow these instructions to get the project up and running on your local machine.
