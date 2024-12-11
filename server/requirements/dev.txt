@@ -35,3 +35,4 @@ Willow==1.8.0
 python-decouple==3.1
 mutagen==1.47.0
 librosa==0.10.1
+django-ckeditor==6.5.1
